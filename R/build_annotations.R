@@ -325,7 +325,8 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
         con = 'http://hgdownload.cse.ucsc.edu/goldenpath/galGal5/database/cpgIslandExt.txt.gz'
     } else if (genome == "Dpulex") {
         use_ah = FALSE
-        con = ''
+        # Place CGI-Dpulex.txt in working directory // Produced with makeCGI package (Hao Wu Lab) with posterior probability 0.975
+        con = 'CGI-Dpulex.txt'
     } else {
         stop(sprintf('CpG features are not supported for genome %s', genome))
     }
@@ -349,8 +350,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
                 islands = ah[[ID]]
             } else {
                 if (genome == "Dpulex"){
-                    # Place CGI-Dpulex.txt in working directory
-                    islands_tbl = read.csv("CGI-Dpulex.txt",
+                    islands_tbl = read.csv(con,
                                            header = TRUE, sep = "\t",
                                            colClasses = c(rep(NA, 3), rep("NULL", 5)))
                 } else {
