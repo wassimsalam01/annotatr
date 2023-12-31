@@ -689,7 +689,7 @@ build_gene_annots = function(genome = annotatr::builtin_genomes(), annotations =
                 GenomicRanges::mcols(cds_gr)$gene_id = eg2symbol[match(GenomicRanges::mcols(cds_gr)$tx_name, id_maps$TXNAME),'gene_id'] 
                 GenomicRanges::mcols(cds_gr)$symbol = id_maps[match(GenomicRanges::mcols(cds_gr)$tx_name, id_maps$TXNAME), 'GENEID']
             } else {
-                GenomicRanges::mcols(cds_gr)$gene_id = id_maps[match(GenomicRanges::mcols(cds_gr)$tx_name, id_maps$TXNAME), 'gene_id']
+                GenomicRanges::mcols(cds_gr)$gene_id = id_maps[match(GenomicRanges::mcols(cds_gr)$tx_name, id_maps$TXNAME), 'GENEID']
                 GenomicRanges::mcols(cds_gr)$symbol = eg2symbol[match(GenomicRanges::mcols(cds_gr)$gene_id, eg2symbol$gene_id), 'symbol']  
             }
             
