@@ -633,8 +633,14 @@ build_gene_annots = function(genome = annotatr::builtin_genomes(), annotations =
             cds_gr = unlist(cds_grl, use.names = FALSE)
             GenomicRanges::mcols(cds_gr)$tx_name = cds_txname_vec
             # Add Entrez ID, symbol, and type
-            GenomicRanges::mcols(cds_gr)$gene_id = id_maps[match(GenomicRanges::mcols(cds_gr)$tx_name, id_maps$TXNAME), 'GENEID']
-            GenomicRanges::mcols(cds_gr)$symbol = eg2symbol[match(GenomicRanges::mcols(cds_gr)$gene_id, eg2symbol$gene_id), 'symbol']
+            if(orgdb_name == "Dpulex"){
+                GenomicRanges::mcols(cds_gr)$gene_id = eg2symbol[match(GenomicRanges::mcols(cds_gr)$tx_name, id_maps$TXNAME),'gene_id'] 
+                GenomicRanges::mcols(cds_gr)$symbol = id_maps[match(GenomicRanges::mcols(cds_gr)$tx_name, id_maps$TXNAME), 'GENEID']
+            } else {
+                GenomicRanges::mcols(cds_gr)$gene_id = id_maps[match(GenomicRanges::mcols(cds_gr)$tx_name, id_maps$TXNAME), 'gene_id']
+                GenomicRanges::mcols(cds_gr)$symbol = eg2symbol[match(GenomicRanges::mcols(cds_gr)$gene_id, eg2symbol$gene_id), 'symbol']  
+            }
+            
             GenomicRanges::mcols(cds_gr)$type = sprintf('%s_genes_cds', genome)
             GenomicRanges::mcols(cds_gr)$id = paste0('CDS:', seq_along(cds_gr))
 
