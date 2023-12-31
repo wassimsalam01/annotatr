@@ -536,10 +536,24 @@ build_gene_annots = function(genome = annotatr::builtin_genomes(), annotations =
     if(!is.null(err_mess)) {
         stop(err_mess)
     }
-    x = get(sprintf('org.%s.egSYMBOL', orgdb_name))
+    if(orgdb_name == "Dpulex"){
+        x = createSimpleBimap(tablename = "gene_info",
+                              Lcolname = "ENTREZID",
+                              Rcolname = "SYMBOL",
+                              datacache = org.Dpulex.eg.db:::datacache,
+                              objName = "GIDSYMBOL",
+                              objTarget = "org.Dpulex.eg.db")
+    } else {
+        x = get(sprintf('org.%s.egSYMBOL', orgdb_name)) 
+    }
+
     mapped_genes = mappedkeys(x)
     eg2symbol = as.data.frame(x[mapped_genes])
 
+    if(orgdb_name == "Dpulex"){
+        colnames(eg2symbol) = c("gene_id","symbol")
+    }
+    
     # Build the base transcripts
     tx_gr = transcripts(txdb, columns = c('TXID','GENEID','TXNAME'))
     # Create TSS GRanges for later use with intronexon boundaries
