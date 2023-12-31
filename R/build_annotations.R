@@ -353,27 +353,56 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
                     islands_tbl = read.csv(con,
                                            header = TRUE, sep = "\t",
                                            colClasses = c(rep(NA, 3), rep("NULL", 5)))
+                    if(!file.exists("daphnia_pulex.chrom.sizes.txt")){
+                    download.file(url = "https://hgdownload.soe.ucsc.edu/hubs/GCF/021/134/715/GCF_021134715.1/GCF_021134715.1.chrom.sizes.txt",
+                                  destfile = "daphnia_pulex.chrom.sizes.txt")
+                    }
+          
+                  chrom_info = read.csv(file = "daphnia_pulex.chrom.sizes.txt",
+                                        header = FALSE, sep = "\t",
+                                        col.names = c("chr","size"))
+                  chrom_info = rbind(chrom_info[order(chrom_info$chr[1:12]),],chrom_info[13,])
+          
+                  seqinfo_Dpulex = GenomeInfoDb::Seqinfo(seqnames = chrom_info$chr,
+                                                         seqlengths = chrom_info$size,
+                                                         isCircular = logical(13),
+                                                         genome = "Dpulex")
+                    # Convert to GRanges
+                    islands = tryCatch({
+                    GenomicRanges::GRanges(
+                        seqnames = islands_tbl$chr,
+                        ranges = IRanges::IRanges(start = islands_tbl$start, end = islands_tbl$end),
+                        strand = '*',
+                        seqinfo = seqinfo_Dpulex)
+                    }, error = function(e){
+                    GenomicRanges::GRanges(
+                        seqnames = islands_tbl$chr,
+                        ranges = IRanges::IRanges(start = islands_tbl$start, end = islands_tbl$end),
+                        strand = '*')
+                    })
                 } else {
                     # Read from URL. There is surprisingly nothing in base that
                     # does this as easily, so here we are with readr again.
                     islands_tbl = readr::read_tsv(con,
                         col_names = c('chr','start','end'),
                         col_types = '-cii-------')
-                }
-                
-                # Convert to GRanges
-                islands = tryCatch({
+                    # Convert to GRanges
+                    islands = tryCatch({
                     GenomicRanges::GRanges(
                         seqnames = islands_tbl$chr,
                         ranges = IRanges::IRanges(start = islands_tbl$start, end = islands_tbl$end),
                         strand = '*',
                         seqinfo = GenomeInfoDb::Seqinfo(genome=genome))
-                }, error = function(e){
+                    }, error = function(e){
                     GenomicRanges::GRanges(
                         seqnames = islands_tbl$chr,
                         ranges = IRanges::IRanges(start = islands_tbl$start, end = islands_tbl$end),
                         strand = '*')
-                })
+                    })
+                
+                }
+                
+                
             }
             islands = GenomicRanges::sort(islands)
 
@@ -396,9 +425,14 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
             ### Shores
                 # Construct the shores based on:
                 # upstream from the island start and downstream from the island end
-                up_shores = GenomicRanges::flank(islands, width = 2000, start = TRUE, both = FALSE)
-                down_shores = GenomicRanges::flank(islands, width = 2000, start = FALSE, both = FALSE)
-
+                if(genome == "Dpulex"){
+                    up_shores = GenomicRanges::flank(islands, width = 1000, start = TRUE, both = FALSE)
+                    down_shores = GenomicRanges::flank(islands, width = 1000, start = FALSE, both = FALSE)
+                } else{
+                    up_shores = GenomicRanges::flank(islands, width = 2000, start = TRUE, both = FALSE)
+                    down_shores = GenomicRanges::flank(islands, width = 2000, start = FALSE, both = FALSE)
+                } 
+            
                 # Combine, sort, trim, and reduce combined up_shores and down_shores
                 shores = c(up_shores, down_shores)
                 shores = GenomicRanges::sort(shores)
@@ -426,8 +460,15 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
                 ### Shelves
                     # Construct the shelves based on:
                     # upstream from the up_shores start and downstream from the down_shores end
-                    up_shelves = GenomicRanges::flank(shores, width = 2000, start = TRUE, both = FALSE)
-                    down_shelves = GenomicRanges::flank(shores, width = 2000, start = FALSE, both = FALSE)
+                    if(genome == "Dpulex"){
+                        up_shelves = GenomicRanges::flank(shores, width = 1000, start = TRUE, both = FALSE)
+                        down_shelves = GenomicRanges::flank(shores, width = 1000, start = FALSE, both = FALSE) 
+                    } else{
+                        up_shelves = GenomicRanges::flank(shores, width = 2000, start = TRUE, both = FALSE)
+                        down_shelves = GenomicRanges::flank(shores, width = 2000, start = FALSE, both = FALSE) 
+                    }
+                
+                    
 
                     # Combine, sort, trim, and reduce combined up_shelves and down_shelves
                     shelves = c(up_shelves, down_shelves)
