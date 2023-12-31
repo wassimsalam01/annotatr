@@ -323,6 +323,9 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
     } else if (genome == 'galGal5') {
         use_ah = FALSE
         con = 'http://hgdownload.cse.ucsc.edu/goldenpath/galGal5/database/cpgIslandExt.txt.gz'
+    } else if (genome == "Dpulex") {
+        use_ah = FALSE
+        con = ''
     } else {
         stop(sprintf('CpG features are not supported for genome %s', genome))
     }
@@ -345,11 +348,19 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
             if(use_ah) {
                 islands = ah[[ID]]
             } else {
-                # Read from URL. There is surprisingly nothing in base that
-                # does this as easily, so here we are with readr again.
-                islands_tbl = readr::read_tsv(con,
-                    col_names = c('chr','start','end'),
-                    col_types = '-cii-------')
+                if (genome == "Dpulex"){
+                    # Place CGI-Dpulex.txt in working directory
+                    islands_tbl = read.csv("CGI-Dpulex.txt",
+                                           header = TRUE, sep = "\t",
+                                           colClasses = c(rep(NA, 3), rep("NULL", 5)))
+                } else {
+                    # Read from URL. There is surprisingly nothing in base that
+                    # does this as easily, so here we are with readr again.
+                    islands_tbl = readr::read_tsv(con,
+                        col_names = c('chr','start','end'),
+                        col_types = '-cii-------')
+                }
+                
                 # Convert to GRanges
                 islands = tryCatch({
                     GenomicRanges::GRanges(
