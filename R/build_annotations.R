@@ -325,7 +325,24 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
         con = 'http://hgdownload.cse.ucsc.edu/goldenpath/galGal5/database/cpgIslandExt.txt.gz'
     } else if (genome == "Dpulex") {
         use_ah = FALSE
-        # Place CGI-Dpulex.txt in working directory // Produced with makeCGI package (Hao Wu Lab) with posterior probability 0.975
+        if(!file.exists("CGI-Dpulex.txt")){
+          if(!("makeCGI" %in% installed.packages()[,"Package"])){
+            if(!file.exists("makeCGI_1.3.4.tar.gz")){
+              download.file("https://www.haowulab.org/software/makeCGI/makeCGI_1.3.4.tar.gz")
+              install.packages("makeCGI_1.3.4.tar.gz", repos = NULL, type = "source", quiet = TRUE)
+            }
+          }
+          # 1) Load makeCGI
+          require(makeCGI)
+          # 2) Set up default parameters
+          .CGIoptions = CGIoptions()
+          .CGIoptions$rawdat.type = "BSgenome"
+          .CGIoptions$package = "BSgenome.Dpulex.NCBI.ASM2113471v1"
+          .CGIoptions$species = "Dpulex"
+          .CGIoptions$cutoff.CpG = 0.975
+          # 3) Run makeCGI
+          makeCGI(.CGIoptions)
+        }
         con = 'CGI-Dpulex.txt'
     } else {
         stop(sprintf('CpG features are not supported for genome %s', genome))
