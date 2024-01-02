@@ -323,7 +323,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
     } else if (genome == 'galGal5') {
         use_ah = FALSE
         con = 'http://hgdownload.cse.ucsc.edu/goldenpath/galGal5/database/cpgIslandExt.txt.gz'
-    } else if (genome == "Dpulex") {
+    } else if (genome %in% c("Dpulex", "ArcticDpulicaria")) {
         use_ah = FALSE
         con = 'CGI-Dpulex.txt'
     } else {
@@ -348,13 +348,13 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
             if(use_ah) {
                 islands = ah[[ID]]
             } else {
-                if (genome == "Dpulex"){
+                if (genome %in% c("Dpulex", "ArcticDpulicaria")){
                     islands_tbl = read.csv(con,
                                            header = TRUE, sep = "\t",
                                            colClasses = c(rep(NA, 3), rep("NULL", 5)))
                     if(!file.exists("daphnia_pulex.chrom.sizes.txt")){
-                    download.file(url = "https://hgdownload.soe.ucsc.edu/hubs/GCF/021/134/715/GCF_021134715.1/GCF_021134715.1.chrom.sizes.txt",
-                                  destfile = "daphnia_pulex.chrom.sizes.txt")
+                        download.file(url = "https://hgdownload.soe.ucsc.edu/hubs/GCF/021/134/715/GCF_021134715.1/GCF_021134715.1.chrom.sizes.txt",
+                                      destfile = "daphnia_pulex.chrom.sizes.txt")
                     }
           
                   chrom_info = read.csv(file = "daphnia_pulex.chrom.sizes.txt",
@@ -424,7 +424,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
             ### Shores
                 # Construct the shores based on:
                 # upstream from the island start and downstream from the island end
-                if(genome == "Dpulex"){
+                if(genome %in% c("Dpulex", "ArcticDpulicaria")){
                     up_shores = GenomicRanges::flank(islands, width = 1000, start = TRUE, both = FALSE)
                     down_shores = GenomicRanges::flank(islands, width = 1000, start = FALSE, both = FALSE)
                 } else{
@@ -459,7 +459,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
                 ### Shelves
                     # Construct the shelves based on:
                     # upstream from the up_shores start and downstream from the down_shores end
-                    if(genome == "Dpulex"){
+                    if(genome %in% c("Dpulex", "ArcticDpulicaria")){
                         up_shelves = GenomicRanges::flank(shores, width = 1000, start = TRUE, both = FALSE)
                         down_shelves = GenomicRanges::flank(shores, width = 1000, start = FALSE, both = FALSE) 
                     } else{
