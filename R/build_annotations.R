@@ -323,7 +323,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
     } else if (genome == 'galGal5') {
         use_ah = FALSE
         con = 'http://hgdownload.cse.ucsc.edu/goldenpath/galGal5/database/cpgIslandExt.txt.gz'
-    } else if (genome == 'Dpulex')) {
+    } else if (genome == 'Dpulex') {
         use_ah = FALSE
         con = 'CGI-Dpulex.txt'
     } else {
@@ -424,7 +424,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
             ### Shores
                 # Construct the shores based on:
                 # upstream from the island start and downstream from the island end
-                if(genome == 'Dpulex')){
+                if(genome == 'Dpulex'){
                     up_shores = GenomicRanges::flank(islands, width = 1000, start = TRUE, both = FALSE)
                     down_shores = GenomicRanges::flank(islands, width = 1000, start = FALSE, both = FALSE)
                 } else{
