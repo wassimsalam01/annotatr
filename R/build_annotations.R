@@ -323,7 +323,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
     } else if (genome == 'galGal5') {
         use_ah = FALSE
         con = 'http://hgdownload.cse.ucsc.edu/goldenpath/galGal5/database/cpgIslandExt.txt.gz'
-    } else if (genome %in% c("Dpulex", "ArcticDpulicaria")) {
+    } else if (genome == 'Dpulex')) {
         use_ah = FALSE
         con = 'CGI-Dpulex.txt'
     } else {
@@ -348,7 +348,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
             if(use_ah) {
                 islands = ah[[ID]]
             } else {
-                if (genome %in% c("Dpulex", "ArcticDpulicaria")){
+                if (genome == 'Dpulex'){
                     islands_tbl = read.csv(con,
                                            header = TRUE, sep = "\t",
                                            colClasses = c(rep(NA, 3), rep("NULL", 5)))
@@ -424,7 +424,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
             ### Shores
                 # Construct the shores based on:
                 # upstream from the island start and downstream from the island end
-                if(genome %in% c("Dpulex", "ArcticDpulicaria")){
+                if(genome == 'Dpulex')){
                     up_shores = GenomicRanges::flank(islands, width = 1000, start = TRUE, both = FALSE)
                     down_shores = GenomicRanges::flank(islands, width = 1000, start = FALSE, both = FALSE)
                 } else{
@@ -459,7 +459,7 @@ build_cpg_annots = function(genome = annotatr::builtin_genomes(), annotations = 
                 ### Shelves
                     # Construct the shelves based on:
                     # upstream from the up_shores start and downstream from the down_shores end
-                    if(genome %in% c("Dpulex", "ArcticDpulicaria")){
+                    if(genome == 'Dpulex'){
                         up_shelves = GenomicRanges::flank(shores, width = 1000, start = TRUE, both = FALSE)
                         down_shelves = GenomicRanges::flank(shores, width = 1000, start = FALSE, both = FALSE) 
                     } else{
