@@ -11,13 +11,12 @@ TXDBS = c(
     'TxDb.Rnorvegicus.UCSC.rn4.ensGene',
     'TxDb.Rnorvegicus.UCSC.rn5.refGene',
     'TxDb.Rnorvegicus.UCSC.rn6.refGene',
-    'TxDb.Dpulex.NCBI.ASM2113471v1.knownGene',
     'TxDb.Dpulex.NCBI.ASM2113471v1.knownGene')
 
 # org.* family of packages
 ORGDBS = data.frame(
-    genome = c('dm3','dm6','galGal5','hg19','hg38','mm9','mm10','rn4','rn5','rn6','Dpulex','ArcticDpulicaria'),
-    org = c('Dm','Dm','Gg','Hs','Hs','Mm','Mm','Rn','Rn','Rn','Dpulex','Dpulex'),
+    genome = c('dm3','dm6','galGal5','hg19','hg38','mm9','mm10','rn4','rn5','rn6','Dpulex'),
+    org = c('Dm','Dm','Gg','Hs','Hs','Mm','Mm','Rn','Rn','Rn','Dpulex'),
     stringsAsFactors = FALSE)
 
 HMMCELLLINES = c('Gm12878','H1hesc','Hepg2','Hmec','Hsmm','Huvec','K562','Nhek','Nhlf')
